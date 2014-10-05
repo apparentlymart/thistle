@@ -2,6 +2,7 @@
     "name": "thistle",
     "description": "Customizable HTML template engine",
     "version": "0.0.0dev",
+    "main": "./index.js",
     "scripts": {
         "test": "nodeunit tests"
     },
