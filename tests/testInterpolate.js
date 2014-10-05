@@ -34,6 +34,7 @@ module.exports = {
     testTwoInterpolations: okTest('hello {{v1}} {{v2}}', 'hello abc123 123abc'),
     testAdjacentInterpolations: okTest('hello {{v1}}{{v2}}', 'hello abc123123abc'),
     testJustInterpolation: okTest('{{v1}}', 'abc123'),
+    testTrailingText: okTest('{{v1}} woo', 'abc123 woo'),
     testInterpolateNumber: okTest('{{num}}', '5'),
     testInterpolateUndefined: okTest('woo {{missing1}}', 'woo '),
     testInterpolateNull: okTest('{{missing2}}', ''),
