@@ -42,6 +42,60 @@ module.exports = {
         test.done();
     },
 
+    testCombineNestedLinkFuncs: function (test) {
+
+        var innerTestFuncs = [
+            function a(scope, nodes) {
+                nodes.push(scope.a);
+            },
+            function b(scope, nodes) {
+                nodes.push(scope.b);
+            }
+        ];
+        var nested = compileUtil.combineLinkFuncs(innerTestFuncs);
+
+        var outerTestFuncs = [
+            function c(scope, nodes) {
+                nodes.push(scope.c);
+            },
+            nested,
+            function d(scope, nodes) {
+                nodes.push(scope.d);
+            }
+        ];
+
+        var result = compileUtil.combineLinkFuncs(outerTestFuncs);
+        test.deepEqual(
+            result.combinedFunctions,
+            [
+                outerTestFuncs[0],
+                innerTestFuncs[0],
+                innerTestFuncs[1],
+                outerTestFuncs[2]
+            ]
+        );
+
+        var nodes = [];
+        var scope = {
+            a: 1,
+            b: 2,
+            c: 3,
+            d: 4
+        };
+        result(scope, nodes);
+        test.deepEqual(
+            nodes,
+            [
+                3,
+                1,
+                2,
+                4
+            ]
+        );
+
+        test.done();
+    },
+
     testEncodeJsonString: makeEncodeJsonTest(
         'hello',
         '"hello"'
