@@ -3,8 +3,37 @@ var Interpolate = require('./lib/interpolate.js');
 var Parse = require('./lib/parse.js');
 var Compile = require('./lib/compile.js');
 var Scope = require('./lib/scope.js');
-var cheerio = require('cheerio');
+var htmlParser = require('htmlparser2');
 var esprima = require('esprima');
+var domSerializer = require('dom-serializer');
+
+function parseHtml(htmlSrc) {
+    var retError, retResult;
+    var domHandler = new htmlParser.DomHandler(
+        function (error, dom) {
+            if (error) {
+                retError = error;
+            }
+            else {
+                retResult = dom;
+            }
+        }
+    );
+    var parser = new htmlParser.Parser(domHandler);
+    parser.write(htmlSrc);
+    parser.done();
+
+    if (retError) {
+        throw retError;
+    }
+    else {
+        return retResult;
+    }
+}
+
+function serializeHtml(dom) {
+    return domSerializer(dom);
+}
 
 function thistle(opts) {
     opts = opts || {};
@@ -25,13 +54,14 @@ function thistle(opts) {
     var compile = Compile({
         parse: parse,
         interpolate: interpolate,
-        cheerio: cheerio.load('<html></html>')
+        htmlParser: parseHtml
     });
 
     return {
         compile: compile,
         parse: parse,
-        interpolate: interpolate
+        interpolate: interpolate,
+        serializeHtml: serializeHtml
     };
 }
 

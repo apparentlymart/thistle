@@ -8,7 +8,9 @@
     },
     "dependencies": {
         "esprima": "~1.2.2",
-        "cheerio": "0.17.0"
+        "htmlparser2": "~3.7.3",
+        "domutils": "~1.5.0",
+        "dom-serializer": "0.0.1"
     },
     "devDependencies": {
         "nodeunit": ""
