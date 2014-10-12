@@ -40,7 +40,8 @@ function thistle(opts) {
     var startSymbol = opts.interpolateStartSymbol;
     var endSymbol = opts.interpolateEndSymbol;
     var astBuilderFn = opts.astBuilder || Parse.esprimaAstBuilder(esprima);
-    var filters = opts.filters;
+    var directives = [];
+    var filters = {};
 
     var parse = Parse({
         astBuilder: astBuilderFn,
@@ -54,7 +55,8 @@ function thistle(opts) {
     var compile = Compile({
         parse: parse,
         interpolate: interpolate,
-        htmlParser: parseHtml
+        htmlParser: parseHtml,
+        directives: directives
     });
 
     return {
@@ -62,6 +64,22 @@ function thistle(opts) {
         parse: parse,
         interpolate: interpolate,
         serializeHtml: serializeHtml
+        addDirective: function addDirective(directive) {
+            directives.push(directive);
+        },
+        addDirectives: function addDirectives(newDirectives) {
+            directives.push.apply(directives, newDirectives);
+        },
+        addFilter: function addFilter(name, func) {
+            filters[name] = func;
+        },
+        addFilters: function addFilters(map) {
+            for (var k in map) {
+                if (map.hasOwnProperty(k)) {
+                    filters[k] = map[k];
+                }
+            }
+        }
     };
 }
 
