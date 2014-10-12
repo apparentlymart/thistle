@@ -10,7 +10,8 @@
         "esprima": "~1.2.2",
         "htmlparser2": "~3.7.3",
         "domutils": "~1.5.0",
-        "dom-serializer": "0.0.1"
+        "dom-serializer": "0.0.1",
+        "CSSselect": "0.7.0"
     },
     "devDependencies": {
         "nodeunit": ""

@@ -3,7 +3,9 @@ var Interpolate = require('./lib/interpolate.js');
 var Parse = require('./lib/parse.js');
 var Compile = require('./lib/compile.js');
 var Scope = require('./lib/scope.js');
+var DirectiveTypes = require('./lib/directivetypes.js');
 var htmlParser = require('htmlparser2');
+var cssSelect = require('CSSselect');
 var esprima = require('esprima');
 var domSerializer = require('dom-serializer');
 
@@ -29,6 +31,10 @@ function parseHtml(htmlSrc) {
     else {
         return retResult;
     }
+}
+
+function compileCssSelector(selector) {
+    return cssSelect.compile(selector);
 }
 
 function serializeHtml(dom) {
@@ -58,12 +64,19 @@ function thistle(opts) {
         htmlParser: parseHtml,
         directives: directives
     });
+    var directiveTypes = DirectiveTypes({
+        compile: compile,
+        compileSelector: compileCssSelector
+    });
 
     return {
         compile: compile,
         parse: parse,
         interpolate: interpolate,
         serializeHtml: serializeHtml
+        TemplateDirective: directiveTypes.TemplateDirective,
+        ComponentDirective: directiveTypes.ComponentDirective,
+        DecoratorDirective: directiveTypes.DecoratorDirective,
         addDirective: function addDirective(directive) {
             directives.push(directive);
         },
