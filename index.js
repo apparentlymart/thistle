@@ -4,6 +4,7 @@ var Parse = require('./lib/parse.js');
 var Compile = require('./lib/compile.js');
 var Scope = require('./lib/scope.js');
 var DirectiveTypes = require('./lib/directivetypes.js');
+var StandardDirectives = require('./lib/stddirectives.js');
 var htmlParser = require('htmlparser2');
 var cssSelect = require('CSSselect');
 var esprima = require('esprima');
@@ -46,6 +47,9 @@ function thistle(opts) {
     var startSymbol = opts.interpolateStartSymbol;
     var endSymbol = opts.interpolateEndSymbol;
     var astBuilderFn = opts.astBuilder || Parse.esprimaAstBuilder(esprima);
+    var addStandardDirectives = (
+        typeof opts.standardDirectives !== 'undefined' ? (!!opts.standardDirectives) : true
+    );
     var directives = [];
     var filters = {};
 
@@ -68,6 +72,15 @@ function thistle(opts) {
         compile: compile,
         compileSelector: compileCssSelector
     });
+    var standardDirectives = StandardDirectives({
+        directiveTypes: directiveTypes,
+        parse: parse,
+        interpolate: interpolate
+    });
+
+    if (addStandardDirectives) {
+        directives.push.apply(directives, standardDirectives);
+    }
 
     return {
         compile: compile,
@@ -77,6 +90,7 @@ function thistle(opts) {
         TemplateDirective: directiveTypes.TemplateDirective,
         ComponentDirective: directiveTypes.ComponentDirective,
         DecoratorDirective: directiveTypes.DecoratorDirective,
+        standardDirectives: standardDirectives,
         addDirective: function addDirective(directive) {
             directives.push(directive);
         },
