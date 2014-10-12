@@ -86,7 +86,7 @@ function thistle(opts) {
         compile: compile,
         parse: parse,
         interpolate: interpolate,
-        serializeHtml: serializeHtml
+        serializeHtml: serializeHtml,
         TemplateDirective: directiveTypes.TemplateDirective,
         ComponentDirective: directiveTypes.ComponentDirective,
         DecoratorDirective: directiveTypes.DecoratorDirective,
