@@ -3,6 +3,7 @@
     "description": "Customizable HTML template engine",
     "version": "0.0.0dev",
     "main": "./index.js",
+    "repository": "https://github.com/thistlejs/thistle",
     "scripts": {
         "test": "istanbul test nodeunit tests"
     },
