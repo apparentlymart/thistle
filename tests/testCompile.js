@@ -213,7 +213,8 @@ module.exports = {
 
         test.equal(result.length, 0, 'no nodes in result');
         test.ok(directive.match.calledWithExactly(directiveElement), 'directive match called');
-        test.ok(directive.compile.calledWithExactly(directiveElement), 'directive compile called');
+        test.ok(directive.compile.calledWith(directiveElement), 'directive compile called');
+        test.ok(directive.compile.firstCall.args[1].getAncestorService, 'directive compile got context');
         var linkCall = directiveLinkFn.firstCall;
         test.equal(linkCall.args.length, 2, 'linkfn passed two arguments');
         test.equal(linkCall.args[0], scope, 'linkfn passed scope');
@@ -390,12 +391,115 @@ module.exports = {
         test.equal(result[2].data, 'baz', 'third node has correct text content');
         test.equal(result[2].attribs, undefined, 'third node has no attributes');
         test.ok(directive.match.calledWithExactly(directiveElement), 'directive match called');
-        test.ok(directive.compile.calledWithExactly(directiveElement), 'directive compile called');
+        test.ok(directive.compile.calledWith(directiveElement), 'directive compile called');
+        test.ok(directive.compile.firstCall.args[1].getAncestorService, 'directive compile got context');
         var linkCall = linkSpy.firstCall;
         test.equal(linkCall.args.length, 3, 'linkfn passed three arguments');
         test.equal(linkCall.args[0], scope, 'linkfn passed scope');
         test.equal(linkCall.args[1].type, 'root', 'linkfn passed root node');
         test.equal(linkCall.args[2], undefined, 'linkfn passed no contentLinkFn');
+
+        test.done();
+    },
+
+    testServices: function (test) {
+        var opts = stubOpts();
+
+        var providerCalled = false;
+        var siblingGotService = 'neverCalled';
+        var childGotService = 'neverCalled';
+        var grandchildGotService = 'neverCalled';
+
+        var providerDirective = {
+            type: 'decorator',
+            match: function (node) {
+                return node.attribs['provider'] ? true : false;
+            },
+            compile: function (tElement, context) {
+                providerCalled = true;
+                context.addService('dummyService', {
+                    dummyService: true
+                });
+                return function () {};
+            }
+        };
+        var siblingDirective = {
+            type: 'decorator',
+            match: function (node) {
+                return node.attribs['sibling'] ? true : false;
+            },
+            compile: function (tElement, context) {
+                // expected to be null.
+                siblingGotService = context.getAncestorService('dummyService');
+                return function () {};
+            }
+        };
+        var childConsumerDirective = {
+            type: 'decorator',
+            match: function (node) {
+                return node.attribs['child'] ? true : false;
+            },
+            compile: function (tElement, context) {
+                childGotService = context.getAncestorService('dummyService');
+                return function () {};
+            }
+        };
+        var grandchildConsumerDirective = {
+            type: 'decorator',
+            match: function (node) {
+                return node.attribs['grandchild'] ? true : false;
+            },
+            compile: function (tElement, context) {
+                grandchildGotService = context.getAncestorService('dummyService');
+                return function () {};
+            }
+        };
+
+        opts.directives = [
+            providerDirective,
+            siblingDirective,
+            childConsumerDirective,
+            grandchildConsumerDirective
+        ];
+        var compile = Compile(opts);
+
+        var result = compile({
+            type: 'root',
+            children: [
+                {
+                    type: 'tag',
+                    name: 'foo',
+                    attribs: {
+                        provider: '1',
+                        sibling: '1'
+                    },
+                    children: [
+                        {
+                            type: 'tag',
+                            name: 'foo',
+                            attribs: {
+                                child: '1'
+                            },
+                            children: [
+                                {
+                                    type: 'tag',
+                                    name: 'foo',
+                                    attribs: {
+                                        grandchild: '1'
+                                    },
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        })
+
+        test.ok(providerCalled, 'provider was compiled');
+        test.deepEqual(siblingGotService, null, 'sibling got no service');
+        test.deepEqual(childGotService, {dummyService: true}, 'child got service');
+        test.deepEqual(grandchildGotService, {dummyService: true}, 'grandchild got service');
 
         test.done();
     }
