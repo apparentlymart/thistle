@@ -4,7 +4,7 @@
     "version": "0.0.0dev",
     "main": "./index.js",
     "scripts": {
-        "test": "nodeunit tests"
+        "test": "istanbul test nodeunit tests"
     },
     "dependencies": {
         "esprima": "~1.2.2",
@@ -14,6 +14,7 @@
         "CSSselect": "0.7.0"
     },
     "devDependencies": {
+        "istanbul": "",
         "nodeunit": ""
     }
 }
