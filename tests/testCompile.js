@@ -396,7 +396,8 @@ module.exports = {
         var linkCall = linkSpy.firstCall;
         test.equal(linkCall.args.length, 3, 'linkfn passed three arguments');
         test.equal(linkCall.args[0], scope, 'linkfn passed scope');
-        test.equal(linkCall.args[1].type, 'root', 'linkfn passed root node');
+        test.equal(linkCall.args[1].type, 'tag', 'linkfn passed an element');
+        test.equal(linkCall.args[1].name, 'component-placeholder', 'linkfn element is placeholder');
         test.equal(linkCall.args[2], undefined, 'linkfn passed no contentLinkFn');
 
         test.done();
