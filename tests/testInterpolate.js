@@ -20,7 +20,8 @@ function okTest(text, expectedResult) {
             missing1: undefined,
             missing2: null,
             num: 5,
-            obj: {hi:true}
+            obj: {hi:true},
+            '{{v1': '--halfescaped--'
         });
         test.equal(gotResult, expectedResult, text + ' produces expected result');
         test.done();
@@ -39,6 +40,8 @@ module.exports = {
     testInterpolateUndefined: okTest('woo {{missing1}}', 'woo '),
     testInterpolateNull: okTest('{{missing2}}', ''),
     testInterpolateObject: okTest('{{obj}}', '{\n    "hi": true\n}'),
+    testEscape: okTest('123{{{{v1}}}}456', '123{{v1}}456'),
+    testHalfEscape: okTest('123{{{{v1}}456', '123--halfescaped--456'),
 
     testAllOrNothing: function (test) {
         var linkFn = defaultInterpolate('foo {{missing}}', {allOrNothing: true});
