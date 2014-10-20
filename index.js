@@ -2,7 +2,6 @@
 var Interpolate = require('./lib/interpolate.js');
 var Parse = require('./lib/parse.js');
 var Compile = require('./lib/compile.js');
-var Scope = require('./lib/scope.js');
 var DirectiveTypes = require('./lib/directivetypes.js');
 var StandardDirectives = require('./lib/stddirectives.js');
 var htmlParser = require('htmlparser2');
