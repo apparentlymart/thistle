@@ -1,7 +1,7 @@
 {
     "name": "thistle",
     "description": "Customizable HTML template engine",
-    "version": "0.0.0dev",
+    "version": "0.0.2",
     "main": "./index.js",
     "repository": "https://github.com/thistlejs/thistle",
     "scripts": {
